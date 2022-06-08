@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>TicTacToe</title>
+</head>
+
+<body>
+  <div hidden="true" width="100%" height="100%" id="winner">
+
+  </div>
+  <div className="board" id="board">
+
+  </div>
+
+
+  <script type="text/javascript">
+
+    let running = true;
+
+    const initialiseGame = () => {
+      document.getElementById("winner").innerHTML = "";
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+      turn = false;
+      populateBoard();
+      addClickable();
+      console.log(1 == 1 && 1 == 0 | 0);
+    }
+
+    const populateBoard = () => {
+      const board = document.getElementById("board");
+
+      const divElement = document.createElement("div");
+      const imageElement = document.createElement("img");
+      imageElement.width = (screen.width / 5) * 1;
+      imageElement.height = ((screen.height / 4) * 1);
+
+      for (let i = 1; i < 4; i++) {
+        divElement.id = "column" + i;
+        board.appendChild(divElement.cloneNode(true));
+      }
+
+      const childArray = Array.from(board.children);
+      childArray.forEach(child => {
+        for (let i = 1; i < 4; i++) {
+          imageElement.id = child.id + "-row" + i;
+          child.appendChild(imageElement.cloneNode(true));
+        }
+      })
+    }
+
+    const addClickable = () => {
+      const spots = getBoardElements();
+
+      spots.forEach(spot => {
+        spot.addEventListener("click", makeMove, { once: true });
+      })
+    }
+
+    const makeMove = (event) => {
+      event.currentTarget.src = "resources/nought.png";
+      event.currentTarget.className = "0";
+      if (checkWin()) {
+        if(checkWin() != true) gameWon(0);
+        return;
+      }
+
+      const spots = getBoardElements();
+      const values = [];
+      spots.forEach(spot => {
+        values.push(parseInt(parseInt(spot.className)));
+      })
+
+      while (true) {
+        const random = Math.floor((Math.random() * 9));
+        if (isNaN(values[random])) {
+          console.log(spots[random]);
+          console.log(random);
+          spots[random].src = "resources/cross.png";
+          spots[random].className = "1";
+          spots[random].removeEventListener("click", makeMove);
+          break;
+        }
+      }
+
+      if (checkWin()) {
+        gameWon(1);
+      }
+
+      /*
+      event.currentTarget.src = "resources/cross.png";
+      event.currentTarget.className = "1";
+      turn = true;
+      if (checkWin()) {
+        gameWon(1);
+      }
+      */
+    }
+
+    const gameWon = (winner) => {
+      running = false;
+      if (winner == 1) {
+        document.getElementById("winner").innerHTML = "<h1>WINNER IS CROSSES!</h1><button onclick='initialiseGame()'>RESTART</button>";
+        document.getElementById("winner").hidden = false;
+        getBoardElements().forEach(spot => {
+          spot.removeEventListener("click", makeMove);
+        })
+      } else if (winner == 0) {
+        document.getElementById("winner").innerHTML = "<h1>WINNER IS NOUGHTS!</h1><button onclick='initialiseGame()'>RESTART</button>";
+        document.getElementById("winner").hidden = false;
+        getBoardElements().forEach(spot => {
+          spot.removeEventListener("click", makeMove);
+        })
+      } else {
+        console.log("I dont know what the fuck is happening here...");
+      }
+    }
+
+    const getBoardElements = () => {
+      const obj = [];
+
+      for (let i = 1; i < 4; i++) {
+        for (let j = 1; j < 4; j++) {
+          obj.push(document.getElementById("column" + i + "-row" + j));
+        }
+      }
+      return obj;
+    }
+
+    const checkWin = () => {
+      const spots = getBoardElements();
+      const values = [];
+      spots.forEach(spot => {
+        values.push(parseInt(spot.className));
+      })
+
+      //CHECK CROSSES
+      if (values[0] == 1 && values[1] == 1 && values[2] == 1) {
+        return ([0, 1, 2, 0]);
+      } else if (values[3] == 1 && values[4] == 1 && values[5] == 1) {
+        return ([3, 4, 5, 0]);
+      } else if (values[6] == 1 && values[7] == 1 && values[8] == 1) {
+        return ([6, 7, 8, 0]);
+      } else if (values[0] == 1 && values[3] == 1 && values[6] == 1) {
+        return ([0, 3, 6, 0]);
+      } else if (values[1] == 1 && values[4] == 1 && values[7] == 1) {
+        return ([1, 4, 7, 0]);
+      } else if (values[2] == 1 && values[5] == 1 && values[8] == 1) {
+        return ([2, 5, 8, 0]);
+      } else if (values[0] == 1 && values[4] == 1 && values[8] == 1) {
+        return ([0, 4, 8, 0]);
+      } else if (values[2] == 1 && values[4] == 1 && values[6] == 1) {
+        return ([2, 4, 6, 0]);
+      }
+      //CHECK NOUGHTS
+      else if (values[0] == 0 && values[1] == 0 && values[2] == 0) {
+        return ([0, 1, 2, 0]);
+      } else if (values[3] == 0 && values[4] == 0 && values[5] == 0) {
+        return ([3, 4, 5, 0]);
+      } else if (values[6] == 0 && values[7] == 0 && values[8] == 0) {
+        return ([6, 7, 8, 0]);
+      } else if (values[0] == 0 && values[3] == 0 && values[6] == 0) {
+        return ([0, 3, 6, 0]);
+      } else if (values[1] == 0 && values[4] == 0 && values[7] == 0) {
+        return ([1, 4, 7, 0]);
+      } else if (values[2] == 0 && values[5] == 0 && values[8] == 0) {
+        return ([2, 5, 8, 0]);
+      } else if (values[0] == 0 && values[4] == 0 && values[8] == 0) {
+        return ([0, 4, 8, 0]);
+      } else if (values[2] == 0 && values[4] == 0 && values[6] == 0) {
+        return ([2, 4, 6, 0]);
+      } 
+      //CHECK FULL
+      else if(checkNaN(values)) {
+        document.getElementById("winner").innerHTML = "<h1>NO ONE WINS!</h1><button onclick='initialiseGame()'>RESTART</button>";
+        document.getElementById("winner").hidden = false;
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+    const checkNaN = (values) => {
+      let count = 0;
+      values.forEach(value => {
+        if(Number.isNaN(value)) {
+          count = count + 1;
+        }
+      })
+      if(count > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    initialiseGame();
+  </script>
+  <style>
+    #board {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</body>
+
+</html>
